@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboards</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f8fa;
+      --text: #24292f;
+      --muted: #57606a;
+      --line: #d0d7de;
+      --panel: #ffffff;
+      --accent: #1f883d;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 56px 24px;
+    }
+
+    header {
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 36px;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.55;
+    }
+
+    section {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      padding: 24px;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 20px;
+      letter-spacing: 0;
+    }
+
+    ul {
+      margin: 16px 0 0;
+      padding-left: 20px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    code {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--bg);
+      padding: 2px 6px;
+      color: var(--text);
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 18px;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Dashboards</h1>
+      <p>Static dashboard hub published with GitHub Pages.</p>
+    </header>
+
+    <section>
+      <h2>Ready for dashboard files</h2>
+      <p>Add HTML, CSS, JavaScript, CSV, JSON, and asset files to this repository. Link each published dashboard from <code>index.html</code>.</p>
+      <ul>
+        <li>Repository: <code>t89818309777-glitch/dashboards</code></li>
+        <li>Publishing source: <code>main</code> branch, root folder</li>
+        <li>Runtime: static GitHub Pages</li>
+      </ul>
+      <div class="status"><span class="dot"></span><span>Pages setup in progress</span></div>
+    </section>
+  </main>
+</body>
+</html>
