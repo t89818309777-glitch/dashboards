@@ -1,4 +1,4 @@
-name: Temporary Whisper Model Bridge
+name: Temporary Whisper Runtime Bridge
 
 on:
   pull_request:
@@ -11,25 +11,31 @@ permissions:
   contents: read
 
 jobs:
-  package-model:
+  package-runtime:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
-      - name: Download and verify multilingual Whisper model
+      - name: Build official whisper.cpp CPU binary
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p model
-          curl -L --fail --retry 5 --retry-delay 2 \
-            -o model/ggml-small-q5_1.bin \
-            https://github.com/w3xgroup/taskurio-models/releases/download/whisper-models-v1/ggml-small-q5_1.bin
-          echo "ae85e4a935d7a567bd102fe55afc16bb595bdb618e11b2fc7591bc08120411bb  model/ggml-small-q5_1.bin" | sha256sum -c -
-          test "$(stat -c%s model/ggml-small-q5_1.bin)" = "190085487"
+          git clone --depth 1 --branch v1.8.2 https://github.com/ggerganov/whisper.cpp.git
+          cmake -S whisper.cpp -B whisper.cpp/build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_SHARED_LIBS=OFF \
+            -DGGML_NATIVE=OFF \
+            -DWHISPER_BUILD_TESTS=OFF \
+            -DWHISPER_BUILD_EXAMPLES=ON
+          cmake --build whisper.cpp/build --config Release --target whisper-cli -j 2
+          mkdir -p runtime
+          cp whisper.cpp/build/bin/whisper-cli runtime/
+          chmod +x runtime/whisper-cli
+          runtime/whisper-cli --help >/dev/null
 
-      - name: Upload verified model artifact
+      - name: Upload runtime artifact
         uses: actions/upload-artifact@v4
         with:
-          name: whisper-small-q5_1-verified
-          path: model/ggml-small-q5_1.bin
+          name: whisper-cpp-linux-x64-cpu
+          path: runtime/whisper-cli
           retention-days: 1
           if-no-files-found: error
