@@ -1,4 +1,4 @@
-name: Temporary Whisper Runtime Bridge
+name: Temporary Whisper Large-Turbo Model Bridge
 
 on:
   pull_request:
@@ -11,31 +11,26 @@ permissions:
   contents: read
 
 jobs:
-  package-runtime:
+  package-model:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
-      - name: Build official whisper.cpp CPU binary
+      - name: Download official multilingual Whisper large-v3-turbo q5 model
         shell: bash
         run: |
           set -euo pipefail
-          git clone --depth 1 --branch v1.8.2 https://github.com/ggerganov/whisper.cpp.git
-          cmake -S whisper.cpp -B whisper.cpp/build \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DBUILD_SHARED_LIBS=OFF \
-            -DGGML_NATIVE=OFF \
-            -DWHISPER_BUILD_TESTS=OFF \
-            -DWHISPER_BUILD_EXAMPLES=ON
-          cmake --build whisper.cpp/build --config Release --target whisper-cli -j 2
-          mkdir -p runtime
-          cp whisper.cpp/build/bin/whisper-cli runtime/
-          chmod +x runtime/whisper-cli
-          runtime/whisper-cli --help >/dev/null
+          mkdir -p model
+          curl -L --fail --retry 5 --retry-delay 3 \
+            -o model/ggml-large-v3-turbo-q5_0.bin \
+            'https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-large-v3-turbo-q5_0.bin?download=true'
+          stat -c 'size=%s' model/ggml-large-v3-turbo-q5_0.bin | tee model/METADATA.txt
+          sha256sum model/ggml-large-v3-turbo-q5_0.bin | tee model/SHA256SUMS
+          test "$(stat -c%s model/ggml-large-v3-turbo-q5_0.bin)" -gt 500000000
 
-      - name: Upload runtime artifact
+      - name: Upload model artifact
         uses: actions/upload-artifact@v4
         with:
-          name: whisper-cpp-linux-x64-cpu
-          path: runtime/whisper-cli
+          name: whisper-large-v3-turbo-q5_0-official
+          path: model/
           retention-days: 1
           if-no-files-found: error
